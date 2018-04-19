@@ -1,0 +1,176 @@
+<!DOCTYPE HTML>
+<html>
+    <head>
+        <script src="./tree-generator.js"></script>
+        <style>
+                /* Tree generator css */
+                .node{
+                    position: absolute;
+                    z-index: 1001;
+                    background: rgba(0,0,0,0);
+                    border-radius: 40px;
+                    color:white;
+                    font-size: 13px;
+                    min-width: 30px;
+                    min-height: 30px;
+                    top: 0px;
+                    left: 0px;
+                    transition: all 0.5s ease-in-out;
+                }
+            
+                .line{
+                    position: absolute;
+                    z-index: 1000;
+                    border-radius: 100px;
+                    border: solid 1px lightgray;
+                    transition: all 3.0s ease-in-out;
+                }
+
+                .hide{
+                    -webkit-animation-name: fadeout;
+                    -webkit-animation-duration: 0.6s; 
+                    animation-name: fadeout;
+                    animation-duration: 2.0s;
+                    animation-timing-function: ease-in-out;            
+                    visibility: hidden;
+
+                }
+
+                .show{
+                    -webkit-animation-name: fadein;
+                    -webkit-animation-duration: 0.6s; 
+                    animation-name: fadein;
+                    animation-duration: 2.0s;
+                    animation-timing-function: ease-in-out;
+                    
+                }
+
+                @keyframes fadeout{
+                    0% { opacity: 1.0;}
+                    100% { opacity: 0.0;visibility: hidden;}
+                }  
+
+                @keyframes fadein{
+                    0% { opacity: 0.0;}
+                    100% { opacity: 1.0;visibility:visible;}
+                }
+
+                /* outside css */
+                
+                .ocoin{
+                    width:70px;
+                    height: 70px;
+                    padding: 5px;
+                    background-color: aliceblue;
+                    border-radius: 1000px;
+                    transition: all 1.0s ease-in-out;
+                }
+                .icoin{
+                    width: 80%;
+                    height: 80%;
+                    padding: 10%;
+                    /* margin-top:5px; */
+                    background-color: white;
+                    border-radius: 1000px;
+                }
+                .half{
+                    width: 80%;
+                    height: 80%;
+                    
+                    /* margin: 5px; */
+                    border-radius: 1000px;
+                    border-left:solid 2px cadetblue;
+                    border-right: solid 2px cadetblue;
+                    border-top: solid 2px #5f9ea000;
+                    border-bottom: solid 2px #5f9ea000;
+                }
+                .rotate{
+                    -webkit-animation-name: rotating;
+                    -webkit-animation-duration: 3.0s;
+                    animation-name: rotating;
+                    animation-iteration-count: infinite;
+                    animation-duration: 3.0s;
+                    animation-timing-function: ease-in-out;
+                }
+                .anti-rotate{
+                    -webkit-animation-name: anti-rotating;
+                    -webkit-animation-duration: 3.0s;
+                    animation-name: anti-rotating;
+                    animation-iteration-count: infinite;
+                    animation-duration: 3.0s;
+                    animation-timing-function: ease-in-out;
+                }
+                .content{
+                    color:gray;
+                    padding: 4px;
+                    font-size:13px;
+                    font-weight: bold;
+                    text-align: center;
+                }
+
+                @keyframes rotating {
+                    0%{ transform:rotate(0deg); }
+                    100%{ transform: rotate(360deg); }
+                }
+                @keyframes anti-rotating {
+                    0%{ transform:rotate(-0deg); }
+                    100%{ transform: rotate(-360deg); }
+                }
+
+                .child{
+                    background-color: brown;
+                    color: aliceblue;
+                    width: 50px;
+                    height: 50px;
+                    border-radius: 1000px;
+                    font-size: 12px;
+                    text-align: center;
+                    transition:all 0.7s ease-in-out;
+                }
+
+               .test{
+                   width:40px;
+                   height: 40px;
+                   border: solid 2px gray;
+                   background-color: aliceblue;
+                   animation: bobble 4.0s ease-in-out;
+                   -webkit-animation:  bobble 4.0s ease-in-out;
+               }
+
+               @keyframes bobble {
+                   0%{ left:20px;top:20px;}
+                   /* 50%{ left: 40px;top:40px;} */
+                   100%{ left: 20px;top:20px;}
+               }
+
+            </style>
+    </head>
+
+    <body>
+
+        <!-- <div class="ocoin">
+            <div class="icoin">
+                <div class="half content">
+                    <p>2018</p>
+                </div>
+            </div>
+        </div> -->
+
+        <!-- <div class="child">
+            child
+        </div>  -->
+
+        <div id="root">
+        </div>
+
+        <div class="test">
+
+        </div>
+
+
+        <script>
+            
+        </script>
+
+    </body>
+</html>
