@@ -6,10 +6,12 @@
         top: "",
         width: "",
         height: "",
+        events: [{'eventType':'click','eventHandler': __handler_function__() }],
         childs: {
             "node1": {
                 content: "",
                 left: 0px,
+                events: [{'eventType':'click','eventHandler': __handler_function__() }],
                 top: 0px
             },
             "node2": {},..
@@ -26,65 +28,6 @@
 let lines_coordinates = [];
 let nodes_coordinates = [];
 
-data = { content: '<div class="ocoin">\
-                        <div class="icoin">\
-                            <div class="half content">\
-                                <p>2018</p>\
-                            </div>\
-                        </div>\
-                    </div>',
-         left: 120,
-         top: 160,
-         childs: { "n1": { content: '<div class="ocoin">\
-                                        <div class="icoin">\
-                                            <div class="half content">\
-                                                <p>2018</p>\
-                                            </div>\
-                                        </div>\
-                                    </div>',
-                           left: 300,
-                           top: 300 ,
-                           animationTiming: 0.3
-                        },
-                   "n2": { content: '<div class="ocoin">\
-                                        <div class="icoin">\
-                                            <div class="half content">\
-                                                <p>2018</p>\
-                                            </div>\
-                                        </div>\
-                                    </div>',
-                           left: 450,
-                           top: 100,
-                           animationTiming: 0.4
-                        },
-                   "n3": { content:'<div class="ocoin">\
-                                        <div class="icoin">\
-                                            <div class="half content">\
-                                                <p>2018</p>\
-                                            </div>\
-                                        </div>\
-                                    </div>', 
-                           left: 250,
-                           top: 400,
-                           animationTiming: 0.8
-                        },
-                    "n4": { content: '<div class="ocoin">\
-                                        <div class="icoin">\
-                                            <div class="half content">\
-                                                <p>2018</p>\
-                                            </div>\
-                                        </div>\
-                                    </div>',
-                           left: 600,
-                            top: 300,
-                            animationTiming: 0.2
-                        }
-                 }
-       }
-
-var nodes_group = {
-    "group-1": data
-};
 
 let container = null;
 
@@ -106,6 +49,7 @@ function generateNodes(NodeData,nodeid){
         pnode.innerHTML = NodeData.content;
         pnode.style.left = NodeData.left.toString()+"px";
         pnode.style.top = NodeData.top.toString()+"px";
+        pnode.setAttribute("data-toggle","");
         container.appendChild(pnode);
 
         let nodes = Object.keys(NodeData.childs);
@@ -119,6 +63,10 @@ function generateNodes(NodeData,nodeid){
             node.style.left = NodeData.left.toString()+"px";
             node.style.top = NodeData.top.toString()+"px";
             node.style.transitionDuration = NodeData.childs[nodes[i]].animationTiming.toString()+"s";
+            var e =0;
+            for(e=0;e<nodes[i].events.length;e++){
+                node.addEventListener(nodes[i][e].eventType,nodes[i][e].eventHandler);
+            }
             container.appendChild(node);
             // node.style.left = NodeData.childs[nodes[i]].left.toString()+"px";
             // node.style.top = NodeData.childs[nodes[i]].top.toString()+"px";
@@ -186,7 +134,9 @@ function generateNodes(NodeData,nodeid){
 function pop_childs(group_id){
     for(k=0;k<nodes_coordinates.length;k++){
         if(nodes_coordinates[k].group_id == "parent-"+group_id.toString())
-        {
+        {   
+            var group = document.getElementById("parent-"+group_id.toString());
+            group.setAttribute("data-toggle","open");
             var n = document.getElementById(nodes_coordinates[k].node_id);
             n.style.left = nodes_coordinates[k].left;
             n.style.top = nodes_coordinates[k].top;
@@ -200,9 +150,11 @@ function pop_childs(group_id){
 function collapse_childs(group_id){
     for(k=0;k<nodes_coordinates.length;k++){
         if(nodes_coordinates[k].group_id == "parent-"+group_id.toString()){
+            var group = document.getElementById("parent-"+group_id.toString());
+            group.setAttribute("data-toggle","close");
             var n = document.getElementById(nodes_coordinates[k].node_id);
-            n.style.left = nodes_coordinates[k].left;
-            n.style.top = "-1000px";
+            n.style.left = group.style.left;
+            n.style.top = group.style.top;
             
             var l = document.getElementById(nodes_coordinates[k].line_id);
             l.className = "line hide";
@@ -210,17 +162,34 @@ function collapse_childs(group_id){
     }
 }
 
-function connect_groups(){
+function toggle_childs(group_id){
+    var group = document.getElementById("parent-"+group_id.toString());
+    if(group.getAttribute("data-toggle")==""){
+        pop_childs(group_id);
+        group.setAttribute("data-toggle","open");
+    }
+
+    if(group.getAttribute("data-toggle") == "close"){
+        pop_childs(group_id);
+        group.setAttribute("data-toggle","open");
+    }else{
+        collapse_childs(group_id);
+        group.setAttribute("data-toggle","close");
+    }
+}
+
+function connect_groups(nodes_group){
     var group_names = Object.keys(nodes_group);
     for(i=0;i<group_names.length-1;i++){
         // line code
         var line = document.createElement("div");
-        line.className = "line hide";
+        line.className = "line";
+        line.style = "border:solid 1px red;";
 
-        var nl = Number(NodeData.childs[nodes[i]].left);
-        var nt = Number(NodeData.childs[nodes[i]].top);
-        var pl = Number(NodeData.left);
-        var pt = Number(NodeData.top);
+        var nl = Number(nodes_group[group_names[i+1]].left);
+        var nt = Number(nodes_group[group_names[i+1]].top);
+        var pl = Number(nodes_group[group_names[i]].left);
+        var pt = Number(nodes_group[group_names[i]].top);
         var ldiff = nl-pl;
         var tdiff = pt-nt;
         var lwidth = Math.floor(Math.sqrt(ldiff*ldiff+tdiff*tdiff));
@@ -252,8 +221,19 @@ function connect_groups(){
         line.style.transformOrigin = "top left";
         line.style.transform = 'rotate('+rotangle.toString()+'deg)';
 
-        line.style.left = (NodeData.left+30).toString()+"px";
-        line.style.top = (NodeData.top+30).toString()+"px";
+        line.style.left = (nodes_group[group_names[i]].left+30).toString()+"px";
+        line.style.top = (nodes_group[group_names[i]].top+30).toString()+"px";
+
+        // generate parent
+        generateNodes(nodes_group[group_names[i]],group_names[i]);
+        pop_childs(group_names[i]);
+        // generate next
+        generateNodes(nodes_group[group_names[i+1]],group_names[i+1]);
+        pop_childs(group_names[i+1]);
+
+        // append group connector
+        container.appendChild(line);
+
     }
 
 }
